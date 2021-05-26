@@ -5,7 +5,7 @@ A Python3 ePaper Cryptocurrency price ticker that runs on a Raspberry Pi connect
 
 A few minutes work gives you a desk ornament that will tastefully monitor a coin's journey moonward.
 
-![Inverted Color Pi2in13b](pi2in13b.jpg)
+![Inverted Color Pi2in13b](./images/actionshot/pi2in13b.jpg)
 
 Please note there is no support for Red Images(yet). This to make a black and white image that is compatible with the 2.13inch(b) waveshare.
 
