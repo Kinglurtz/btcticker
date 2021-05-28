@@ -7,7 +7,7 @@ import os
 import sys
 import logging
 import RPi.GPIO as GPIO
-from waveshare_epd import epd2in13_V2
+from waveshare_epd import epd2in13b_V3
 import time
 import requests
 import urllib, json
@@ -105,14 +105,15 @@ def getData(config,whichcoin,fiat,other):
 def beanaproblem(message):
 #   A visual cue that the wheels have fallen off
     thebean = Image.open(os.path.join(picdir,'thebean.bmp'))
-    epd = epd2in13_V2.EPD()
-    epd.init(epd.FULL_UPDATE)
+    epd = epd2in13b_V3.EPD()
+    epd.init()
     image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
+    redImage = Image.new('1', (epd.width, epd.height), 255)
     draw = ImageDraw.Draw(image)
     image.paste(thebean, (60,15))
     draw.text((15,150),message, font=font_date,fill = 0)
     image = ImageOps.mirror(image)
-    epd.display(epd.getbuffer(image))
+    epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
     logging.info("epd2in13_V2 BTC Frame")
 #   Reload last good config.yaml
     with open(configfile) as f:
@@ -171,9 +172,9 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         resize = 100,100
         tokenimage.thumbnail(resize, Image.ANTIALIAS)
         new_image = Image.new("RGBA", (120,120), "WHITE") # Create a white rgba background with a 10 pixel border
-        new_image.paste(tokenimage, (10, 10), tokenimage)   
+        new_image.paste(tokenimage, (-20, 0), tokenimage)   
         tokenimage=new_image
-        tokenimage.thumbnail((100,100),Image.ANTIALIAS)
+        tokenimage.thumbnail((80,80),Image.ANTIALIAS)
         tokenimage.save(tokenfilename)
 
 
@@ -184,48 +185,33 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         pricenowstring =str(float('%.5g' % pricenow))
 
     if config['display']['orientation'] == 0 or config['display']['orientation'] == 180 :
-        epd = epd2in13_V2.EPD()
-        epd.init(epd.FULL_UPDATE)
-        image = Image.new('L', (epd.width, epd.height), 255)    # 255: clear the image with white
-        draw = ImageDraw.Draw(image)              
-        draw.text((110,80),str(days_ago)+"day :",font =font_date,fill = 0)
-        draw.text((110,95),pricechange,font =font_date,fill = 0)
-        # Print price to 5 significant figures
-        draw.text((15,200),symbolstring+pricenowstring,font =font,fill = 0)
-        draw.text((10,10),str(time.strftime("%H:%M %a %d %b %Y")),font =font_date,fill = 0)
-        image.paste(tokenimage, (10,25))
-        image.paste(sparkbitmap,(10,125))
-        if config['display']['orientation'] == 180 :
-            image=image.rotate(180, expand=True)
-
+        print("Not supported due to bad image output")
 
     if config['display']['orientation'] == 90 or config['display']['orientation'] == 270 :
-        epd = epd2in13_V2.EPD()
-        epd.init(epd.FULL_UPDATE)
+        epd = epd2in13b_V3.EPD()
+        epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
+        redImage = Image.new('1', (epd.width, epd.height), 255)
         draw = ImageDraw.Draw(image)   
-        draw.text((135,85),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
+        draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
  #.     uncomment the line below to show volume
  #       draw.text((110,105),"24h vol : " + human_format(other['volume']),font =font_date,fill = 0)
-        draw.text((135,100),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
-        if other['ATH']==True:
-            image.paste(ATHbitmap,(190,85))
-        image.paste(sparkbitmap,(80,25))
-        image.paste(tokenimage, (0,10))
+        draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
+        image.paste(sparkbitmap,(35,15))
+        image.paste(tokenimage, (-17,0))
  #       draw.text((5,110),"In retrospect, it was inevitable",font =font_date,fill = 0)
-        draw.text((95,1),str(time.strftime("%H:%M %a %d %b %Y")),font =font_date,fill = 0)
+        draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
         if config['display']['orientation'] == 270 :
             image=image.rotate(180, expand=True)
-#       This is a hack to deal with the mirroring that goes on in 4Gray Horizontal
-#        image = ImageOps.mirror(image)
-
-#   If the display is inverted, invert the image usinng ImageOps        
+#       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
-#   Send the image to the screen        
-    epd.display(epd.getbuffer(image))
+#   Send the image to the screen
+
+    epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
 #    epd.sleep()
+
 
 def currencystringtolist(currstring):
     # Takes the string for currencies in the config.yaml file and turns it into a list
@@ -257,6 +243,8 @@ def main():
             time.sleep(.2)
         except Exception as e:
             message="Data pull/print problem"
+            print(e)
+            time.sleep(10)
             beanaproblem(str(e))
             time.sleep(10)
             lastgrab=lastcoinfetch
@@ -357,7 +345,7 @@ def main():
     
     except KeyboardInterrupt:    
         logging.info("ctrl + c:")
-        epd2in13_V2.epdconfig.module_exit()
+        epd2in13b_V3.epdconfig.module_exit()
         GPIO.cleanup()
         exit()
 
