@@ -2,6 +2,7 @@
 from PIL import Image, ImageOps
 from PIL import ImageFont
 from PIL import ImageDraw
+
 import currency
 import os
 import sys
@@ -16,7 +17,11 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml 
-import socket
+
+#Our own imports that we will maintain locally
+import Network as net
+
+
 picdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
 fontdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts/googlefonts')
 configfile = os.path.join(os.path.dirname(os.path.realpath(__file__)),'config.yaml')
@@ -24,20 +29,6 @@ fonthiddenprice = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 
 font = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 40)
 fontHorizontal = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 16)
 font_date = ImageFont.truetype(os.path.join(fontdir,'PixelSplitter-Bold.ttf'),11)
-
-def internet(host="8.8.8.8", port=53, timeout=3):
-    """
-    Host: 8.8.8.8 (google-public-dns-a.google.com)
-    OpenPort: 53/tcp
-    Service: domain (DNS/TCP)
-    """
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error as ex:
-        logging.info("No internet")
-        return False
 
 def human_format(num):
     num = float('{:.3g}'.format(num))
@@ -211,6 +202,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
 
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
 #    epd.sleep()
+    
 
 
 def currencystringtolist(currstring):
@@ -249,17 +241,7 @@ def main():
             time.sleep(10)
             lastgrab=lastcoinfetch
         return lastgrab
-
-    def configwrite():
-        """  
-        Write the config file following an adjustment made using the buttons
-        This is so that the unit returns to its last state after it has been 
-        powered off 
-        """ 
-        config['ticker']['currency']=",".join(crypto_list)
-        config['ticker']['fiatcurrency']=",".join(fiat_list)
-        with open(configfile, 'w') as f:
-            data = yaml.dump(config, f)    
+   
 
     logging.basicConfig(level=logging.DEBUG)
 
@@ -284,59 +266,21 @@ def main():
         logging.info(FIAT)
 
         GPIO.setmode(GPIO.BCM)
-        key1 = 5
-        key2 = 6
-        key3 = 13
-        key4 = 19
-
-
-        GPIO.setup(key1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(key2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(key3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(key4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
 
 #       Note that there has been no data pull yet
         datapulled=False 
 #       Time of start
         lastcoinfetch = time.time()
      
-        while True:
-
-            key1state = GPIO.input(key1)
-            key2state = GPIO.input(key2)
-            key3state = GPIO.input(key3)
-            key4state = GPIO.input(key4)
-
-            if internet():
-                if key1state == False:
-                    logging.info('Cycle currencies')
+        while net.checkInternetConnection():
+            #Loop as long as we have internet
+            if (time.time() - lastcoinfetch > float(config['ticker']['updatefrequency'])) or (datapulled==False):
+                #If we exceeded our interval of last coin fetch time or data has not been pulled yet
+                if config['display']['cycle']==True:
                     crypto_list = currencycycle(crypto_list)
                     CURRENCY=crypto_list[0]
-                    logging.info(CURRENCY)
-                    lastcoinfetch=fullupdate()
-                if key2state == False:
-                    logging.info('Rotate - 90')
-                    config['display']['orientation'] = (config['display']['orientation']+90) % 360
-                    lastcoinfetch=fullupdate()
-                if key3state == False:
-                    logging.info('Invert Display')
-                    config['display']['inverted']= not config['display']['inverted']
-                    lastcoinfetch=fullupdate()
-                if key4state == False:
-                    logging.info('Cycle fiat')
-                    fiat_list = currencycycle(fiat_list)
-                    FIAT=fiat_list[0]
-                    logging.info(FIAT)
-                    lastcoinfetch=fullupdate()
-                if (time.time() - lastcoinfetch > float(config['ticker']['updatefrequency'])) or (datapulled==False):
-                    if config['display']['cycle']==True:
-                        crypto_list = currencycycle(crypto_list)
-                        CURRENCY=crypto_list[0]
-                    lastcoinfetch=fullupdate()
-                    datapulled = True
-                    # Moved due to suspicion that button pressing was corrupting config file
-                    configwrite()
+                lastcoinfetch=fullupdate()
+                datapulled = True
 
 
 
