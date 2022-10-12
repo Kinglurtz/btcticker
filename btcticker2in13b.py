@@ -187,7 +187,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         epd = epd2in13b_V3.EPD()
         epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
-        redImage = Image.new('L', (epd.width, epd.height), 255)
+        redImage = Image.new('P', (epd.width, epd.height), 255)
         draw = ImageDraw.Draw(image)   
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
