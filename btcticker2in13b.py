@@ -30,6 +30,8 @@ font = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 40)
 fontHorizontal = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 16)
 font_date = ImageFont.truetype(os.path.join(fontdir,'PixelSplitter-Bold.ttf'),11)
 
+priceChange = 0
+
 def human_format(num):
     num = float('{:.3g}'.format(num))
     magnitude = 0
@@ -43,6 +45,8 @@ def getData(config,whichcoin,fiat,other):
     """
     The function to update the ePaper display. There are two versions of the layout. One for portrait aspect ratio, one for landscape.
     """
+    global priceChange
+
     logging.info("Getting Data")
     days_ago=int(config['ticker']['sparklinedays'])   
     endtime = int(time.time())
@@ -60,6 +64,7 @@ def getData(config,whichcoin,fiat,other):
         pricenow= float(liveprice['current_price'])
         alltimehigh = float(liveprice['ath'])
         other['volume'] = float(liveprice['total_volume'])
+        priceChange = float(liveprice['price_change_24h'])
     else:
         geckourl= "https://api.coingecko.com/api/v3/exchanges/"+config['ticker']['exchange']+"/tickers?coin_ids="+whichcoin+"&include_exchange_logo=false"
         logging.info(geckourl)
@@ -187,21 +192,23 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
-        redImage.paste(sparkbitmap,(35,15))
+        image.paste(sparkbitmap,(35,15))
         image.paste(tokenimage, (-17,0))
- #       draw.text((5,110),"In retrospect, it was inevitable",font =font_date,fill = 0)
+
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
         if config['display']['orientation'] == 270 :
             image=image.rotate(180, expand=True)
-            redImage = redImage.rotate(180,expand=True)
+            redImage = redImage.rotate(180, expand=True)
 #       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
         redImage = ImageOps.invert(image)
 #   Send the image to the screen
 
-    epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
-#    epd.sleep()
+    #epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
+
+    epd.display(epd.getbuffer(redImage), epd.getbuffer(image))
+
     
 
 
