@@ -182,6 +182,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
 
     if config['display']['orientation'] == 0 or config['display']['orientation'] == 180 :
         print("Not supported due to bad image output")
+        exit()
 
     if config['display']['orientation'] == 90 or config['display']['orientation'] == 270 :
         epd = epd2in13b_V3.EPD()
@@ -198,7 +199,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
         if config['display']['orientation'] == 270 :
             image=image.rotate(180, expand=True)
-            redImage = redImage.rotate(270, expand=True)
+        redImage = redImage.rotate(270, expand=True)
 #       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
