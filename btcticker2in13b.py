@@ -187,7 +187,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
  #.     uncomment the line below to show volume
- #       draw.text((110,105),"24h vol : " + human_format(other['volume']),font =font_date,fill = 0)
+        draw.text((110,105),"24h vol : " + human_format(other['volume']),font =font_date,fill = 0)
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
         image.paste(sparkbitmap,(35,15))
         image.paste(tokenimage, (-17,0))
