@@ -272,15 +272,19 @@ def main():
 #       Time of start
         lastcoinfetch = time.time()
      
-        while net.checkInternetConnection():
+        while True:
+            if net.checkInternetConnection():
             #Loop as long as we have internet
-            if (time.time() - lastcoinfetch > float(config['ticker']['updatefrequency'])) or (datapulled==False):
-                #If we exceeded our interval of last coin fetch time or data has not been pulled yet
-                if config['display']['cycle']==True:
-                    crypto_list = currencycycle(crypto_list)
-                    CURRENCY=crypto_list[0]
-                lastcoinfetch=fullupdate()
-                datapulled = True
+                if (time.time() - lastcoinfetch > float(config['ticker']['updatefrequency'])) or (datapulled==False):
+                    #If we exceeded our interval of last coin fetch time or data has not been pulled yet
+                    if config['display']['cycle']==True:
+                        crypto_list = currencycycle(crypto_list)
+                        CURRENCY=crypto_list[0]
+                    lastcoinfetch=fullupdate()
+                    datapulled = True
+                else:
+                    print("Sleeping for 60 seconds because we dont have internet currently")
+                    time.sleep(60)
 
 
 
