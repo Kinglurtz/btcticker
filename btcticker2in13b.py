@@ -198,11 +198,9 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
         if config['display']['orientation'] == 270 :
             image=image.rotate(180, expand=True)
-            redImage = redImage.rotate(180, expand=True)
 #       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
-        redImage = ImageOps.invert(image)
 #   Send the image to the screen
 
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
