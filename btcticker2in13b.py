@@ -192,7 +192,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
-        image.paste(sparkbitmap,(35,15))
+        redImage.paste(sparkbitmap,(35,15))
         image.paste(tokenimage, (-17,0))
 
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
@@ -205,9 +205,8 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         redImage = ImageOps.invert(image)
 #   Send the image to the screen
 
-    #epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
+    epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
 
-    epd.display(epd.getbuffer(redImage), epd.getbuffer(image))
 
     
 
