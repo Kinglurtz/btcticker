@@ -189,7 +189,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
         redImage = Image.new('L', (epd.width, epd.height), 255)
-        draw = ImageDraw.Draw(image)   
+        draw = ImageDraw.Draw(redImage)   
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
@@ -199,7 +199,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
         if config['display']['orientation'] == 270 :
             image=image.rotate(180, expand=True)
-        redImage = redImage.rotate(270, expand=True)
+            redImage = redImage.rotate(270, expand=True)
 #       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
