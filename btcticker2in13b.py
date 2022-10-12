@@ -282,9 +282,9 @@ def main():
                         CURRENCY=crypto_list[0]
                     lastcoinfetch=fullupdate()
                     datapulled = True
-                else:
-                    print("Sleeping for 60 seconds because we dont have internet currently")
-                    time.sleep(60)
+            else:
+                print("Sleeping for 60 seconds because we dont have internet currently")
+                time.sleep(60)
 
 
 
