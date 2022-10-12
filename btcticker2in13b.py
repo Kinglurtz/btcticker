@@ -147,6 +147,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     if config is re-written following adustment we could avoid passing the last two arguments as
     they will just be the first two items of their string in config 
     """
+    global priceChange
     days_ago=int(config['ticker']['sparklinedays'])   
     symbolstring=currency.symbol(fiat.upper())
     if fiat=="jpy" or fiat=="cny":
@@ -189,11 +190,19 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
         redImage = Image.new('L', (epd.height, epd.width), 255)
-        draw = ImageDraw.Draw(image)   
+        draw = None
+
+        if priceChange < 0: #down in the last 24 hours sad life
+            redImage.paste(sparkbitmap,(35,15))
+            draw = ImageDraw.Draw(redImage)
+        else:
+            image.paste(sparkbitmap,(35,15))
+            draw = ImageDraw.Draw(image)
+ 
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
-        redImage.paste(sparkbitmap,(35,15))
+            
         image.paste(tokenimage, (-17,0))
 
         draw.text((75,1),str(time.strftime("%H:%M %a %d %b")),font =font_date,fill = 0)
