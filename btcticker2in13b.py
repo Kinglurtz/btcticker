@@ -192,7 +192,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         redImage = Image.new('L', (epd.height, epd.width), 255)
         draw = None
 
-        if priceChange < 0: #down in the last 24 hours sad life
+        if priceChange > 0: #down in the last 24 hours sad life
             redImage.paste(sparkbitmap,(35,15))
             draw = ImageDraw.Draw(redImage)
         else:
