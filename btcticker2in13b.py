@@ -190,15 +190,13 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
         redImage = Image.new('L', (epd.height, epd.width), 255)
-        draw = None
 
-        if priceChange > 0: #down in the last 24 hours sad life
+        if priceChange < 0: #down in the last 24 hours sad life
             redImage.paste(sparkbitmap,(35,15))
-            draw = ImageDraw.Draw(redImage)
         else:
             image.paste(sparkbitmap,(35,15))
-            draw = ImageDraw.Draw(image)
- 
+
+        draw = ImageDraw.Draw(image)
         draw.text((100,73),str(days_ago)+" day : "+pricechange,font =font_date,fill = 0)
 
         draw.text((100,88),symbolstring+pricenowstring,font =fontHorizontal,fill = 0)
