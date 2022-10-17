@@ -114,6 +114,7 @@ def beanaproblem(message):
 #   Reload last good config.yaml
     with open(configfile) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
+    thebean.close()
 
 def makeSpark(pricestack):
     # Draw and save the sparkline that represents historical data
@@ -140,6 +141,7 @@ def makeSpark(pricestack):
     plt.clf() # Close plot to prevent memory error
     ax.cla() # Close axis to prevent memory error
     plt.close(fig) # Close plot
+    imgspk.close()
 
 def updateDisplay(config,pricestack,whichcoin,fiat,other):
     """   
@@ -156,7 +158,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     currencythumbnail= 'currency/'+whichcoin+'.bmp'
     tokenfilename = os.path.join(picdir,currencythumbnail)
     sparkbitmap = Image.open(os.path.join(picdir,'spark.bmp'))
-    ATHbitmap= Image.open(os.path.join(picdir,'ATH.bmp'))
+
 #   Check for token image, if there isn't one, get on off coingecko, resize it and pop it on a white background
     if os.path.isfile(tokenfilename):
         logging.info("Getting token Image from Image directory")
@@ -211,8 +213,10 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
 #   Send the image to the screen
-
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
+    sparkbitmap.close()
+    image.close()
+    redImage.close()
 
 
     
