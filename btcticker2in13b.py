@@ -213,8 +213,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
 #       This is a hack to dealnvert the image usinng ImageOps        
     if config['display']['inverted'] == True:
         image = ImageOps.invert(image)
-    image.close()
-    redImage.close()
+
 #   Send the image to the screen
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
     sparkbitmap.close()
