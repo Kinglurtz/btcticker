@@ -30,6 +30,8 @@ font = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 40)
 fontHorizontal = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 16)
 font_date = ImageFont.truetype(os.path.join(fontdir,'PixelSplitter-Bold.ttf'),11)
 
+
+
 priceChange = 0
 
 def human_format(num):
@@ -216,6 +218,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
 
 #   Send the image to the screen
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
+    tokenimage.close()
     sparkbitmap.close()
 
 
@@ -253,7 +256,7 @@ def main():
             time.sleep(.2)
         except Exception as e:
             message="Data pull/print problem"
-            print(e)
+            print("In the full update. Error: ", e)
             time.sleep(10)
             beanaproblem(str(e))
             time.sleep(10)
