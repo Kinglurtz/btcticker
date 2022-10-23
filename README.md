@@ -7,10 +7,10 @@ A few minutes work gives you a desk ornament that will tastefully monitor a coin
 
 ![Inverted Color Pi2in13b](./images/actionshot/pi2in13b.jpg)
 
-Please note there is no support for Red Images(yet). This to make a black and white image that is compatible with the 2.13inch(b) waveshare.
+The code has been updated to display a red graph if the price of the asset has decreased over the last 24 hour period. 
 
 # Getting started
-
+Note: There are some trouble shooting steps at the bottom. My personal experience is that you will likely need to do these steps to get newer versions of rasbian to work. 
 ## Supplies (Hopefully the links are still good)
 
 - [Raspberry Pi Zero W (with Headers) - $14](https://www.adafruit.com/product/3708)
