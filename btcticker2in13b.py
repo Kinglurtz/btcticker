@@ -237,9 +237,7 @@ def currencycycle(curr_list):
     curr_list = curr_list[1:]+curr_list[:1]
     return curr_list    
 
-def main():
-    
-    def fullupdate():
+def fullupdate(config, CURRENCY, FIAT, lastcoinfetch):
         """  
         The steps required for a full update of the display
         Earlier versions of the code didn't grab new data for some operations
@@ -262,8 +260,9 @@ def main():
             time.sleep(10)
             lastgrab=lastcoinfetch
         return lastgrab
-   
 
+def main():
+    
     logging.basicConfig(level=logging.DEBUG)
 
     try:
@@ -301,7 +300,7 @@ def main():
                     if config['display']['cycle']==True:
                         crypto_list = currencycycle(crypto_list)
                         CURRENCY=crypto_list[0]
-                    lastcoinfetch=fullupdate()
+                    lastcoinfetch=fullupdate(config, CURRENCY, FIAT, lastcoinfetch)
                     datapulled = True
             else:
                 print("Sleeping for 60 seconds because we dont have internet currently")
