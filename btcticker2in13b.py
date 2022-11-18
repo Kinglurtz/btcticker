@@ -102,6 +102,7 @@ def getData(config,whichcoin,fiat,other):
 
 def beanaproblem(message):
 #   A visual cue that the wheels have fallen off
+    logging.info("Opening the bean")
     thebean = Image.open(os.path.join(picdir,'thebean.bmp'))
     epd = epd2in13b_V3.EPD()
     epd.init()
@@ -112,7 +113,7 @@ def beanaproblem(message):
     draw.text((15,150),message, font=font_date,fill = 0)
     image = ImageOps.mirror(image)
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
-    logging.info("epd2in13_V2 BTC Frame")
+    logging.info("epd2in13_V2 ETH Frame")
 #   Reload last good config.yaml
     with open(configfile) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
@@ -137,6 +138,7 @@ def makeSpark(pricestack):
 
     # Save the resulting bmp file to the images directory
     plt.savefig(os.path.join(picdir,'spark.png'), dpi=20)
+    logging.info("Opening the spark bitmap in makeSpark")
     imgspk = Image.open(os.path.join(picdir,'spark.png'))
     file_out = os.path.join(picdir,'spark.bmp')
     imgspk.save(file_out) 
@@ -159,6 +161,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     pricenow = pricestack[-1]
     currencythumbnail= 'currency/'+whichcoin+'.bmp'
     tokenfilename = os.path.join(picdir,currencythumbnail)
+    logging.info("Opening the spark bit map")
     sparkbitmap = Image.open(os.path.join(picdir,'spark.bmp'))
 
 #   Check for token image, if there isn't one, get on off coingecko, resize it and pop it on a white background
@@ -169,6 +172,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         logging.info("Getting token Image from Coingecko")
         tokenimageurl = "https://api.coingecko.com/api/v3/coins/"+whichcoin+"?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false"
         rawimage = requests.get(tokenimageurl).json()
+        logging.info("Opening the raw image in coin geko block")
         tokenimage = Image.open(requests.get(rawimage['image']['large'], stream=True).raw)
         resize = 100,100
         tokenimage.thumbnail(resize, Image.ANTIALIAS)
@@ -270,6 +274,7 @@ def main():
     try:
         logging.info("epd2in13_V2 BTC Frame")
 #       Get the configuration from config.yaml
+        logging.info("Opening Config")
         with open(configfile) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
         logging.info(config)
