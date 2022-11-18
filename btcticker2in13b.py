@@ -220,6 +220,8 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     epd.display(epd.getbuffer(image), epd.getbuffer(redImage))
     tokenimage.close()
     sparkbitmap.close()
+    image.close()
+    redImage.close()
 
 
 
