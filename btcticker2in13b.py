@@ -30,6 +30,9 @@ font = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 40)
 fontHorizontal = ImageFont.truetype(os.path.join(fontdir,'Roboto-Medium.ttf'), 16)
 font_date = ImageFont.truetype(os.path.join(fontdir,'PixelSplitter-Bold.ttf'),11)
 
+epd = epd2in13b_V3.EPD()
+epd.init()
+
 
 
 priceChange = 0
@@ -101,11 +104,10 @@ def getData(config,whichcoin,fiat,other):
     return timeseriesstack, other
 
 def beanaproblem(message):
+    global epd
 #   A visual cue that the wheels have fallen off
     logging.info("Opening the bean")
     thebean = Image.open(os.path.join(picdir,'thebean.bmp'))
-    epd = epd2in13b_V3.EPD()
-    epd.init()
     image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
     redImage = Image.new('1', (epd.width, epd.height), 255)
     draw = ImageDraw.Draw(image)
@@ -154,6 +156,7 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
     they will just be the first two items of their string in config 
     """
     global priceChange
+    global epd
     days_ago=int(config['ticker']['sparklinedays'])   
     symbolstring=currency.symbol(fiat.upper())
     if fiat=="jpy" or fiat=="cny":
@@ -194,8 +197,6 @@ def updateDisplay(config,pricestack,whichcoin,fiat,other):
         exit()
 
     if config['display']['orientation'] == 90 or config['display']['orientation'] == 270 :
-        epd = epd2in13b_V3.EPD()
-        epd.init()
         image = Image.new('L', (epd.height, epd.width), 255)    # 255: clear the image with white
         redImage = Image.new('L', (epd.height, epd.width), 255)
 
